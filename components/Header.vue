@@ -1,7 +1,19 @@
+<!-- navbar transparente que acompanha a página
+  Elemento pai: header (Elemento que o navbar está sendo estilizado, tranparência e posição fixados)
+  Elemento filho: logo (Elemento da tag "img")
+  Elemento filho: button-group (Elemento da tag "button")
+  elemento neto: text-button(Elemento de estilização do botão)
+  elemento neto: search-container(Elemento de estilização do icon search)
+  icon-button:  (Elemento da função click de todos os icons)
+  icon-container: (Elemento feito para estilização dos outros 2 icons)
+-->
+
 <template>
   <header class="header">
     <div class="logo">
-      <img src="@/assets/logo.png" alt="Logo" />
+      <NuxtLink to="/">
+        <img src="../assets/logo.png" alt="Logo Make Drinks" />
+      </NuxtLink>
     </div>
 
     <div class="button-group">
@@ -10,7 +22,9 @@
       <div class="search-container">
         <button class="icon-button">
           <input
-            placeholder="Digite aqui"
+            v-model="inputData"
+            @change="handleInputChange"
+            placeholder="Search for the drink name"
             v-if="isSearchVisible"
             id="search-input"
             ref="searchInput"
@@ -20,7 +34,7 @@
           />
         </button>
         <div class="icon-container">
-          <IconsSearch @click="handlebuttonclick" />
+          <IconsSearch @click="handleButtonClick" />
         </div>
       </div>
 
@@ -50,19 +64,35 @@ export default {
     IconsUser,
     IconsMenuBars,
   },
-
+  props: {
+    searchDrink: {
+      type: Function,
+      required: true,
+    },
+  },
   data() {
     return {
       searchInputWidth: "0px",
       isSearchVisible: false,
+      inputData: "",
     };
   },
   methods: {
     handleContactUs() {
-      console.log('Botão "Contact Us" clicado!');
+      //console.log('Botão "Contact Us" clicado!');
     },
 
-    handlebuttonclick() {
+    handleInputChange() {
+      console.log(this.inputData);
+      fetch(
+        "https://www.thecocktaildb.com/api/json/v1/1/search.php?s=" +
+          this.inputData
+      )
+        .then((response) => response.json())
+        .then((value) => this.searchDrink(value.drinks));
+    },
+
+    handleButtonClick() {
       this.isSearchVisible = !this.isSearchVisible;
       if (!this.isSearchVisible) {
         this.searchInputWidth = "0px";
@@ -72,20 +102,16 @@ export default {
     },
 
     handleUser() {
-      console.log("Botão de usuário clicado!");
+      //console.log("Botão de usuário clicado!");
     },
     handleMenu() {
-      console.log("Botão de menu clicado!");
+      //console.log("Botão de menu clicado!");
     },
   },
 };
 </script>
 
 <style scoped>
-.barra_pesq {
-  position: relative;
-  top: 25px;
-}
 .text-button {
   padding: 10px 15px;
   font-size: 16px;
@@ -97,20 +123,15 @@ export default {
   background: none;
 }
 
+.carousel__item img {
+  width: 100vw;
+  height: 89vh;
+  object-fit: cover;
+}
+
 .text-button:hover {
   background-color: #45a049; /* Cor de fundo do botão ao passar o mouse */
 }
-/* .icon-button:nth-child(1){
-    height: 20px;
-    width: 20px;
-    margin-right: -30px;
-    z-index: 1;
-    transition: all .2s;
-  }
-  .icon-button:nth-child(1):active{
-    width: 160px;
-    margin-right: 0;
-  } */
 .icon-button {
   background: none;
   border: none;
@@ -118,10 +139,18 @@ export default {
   margin-left: 5px; /* Adiciona margem entre os botões */
   margin-right: 5px;
 }
-
-/* .icon-button:hover {
-     Adicione estilos de destaque quando o mouse estiver sobre os botões de ícone, se necessário 
-  }*/
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #4b4a483d; /* Cor de fundo do cabeçalho */
+  color: rgb(187, 24, 24);
+  height: 50px; 
+  position: fixed;
+  z-index: 1;
+  width: 98vw;
+}
 .search-container {
   display: flex;
   align-items: center;
@@ -134,35 +163,73 @@ input {
   margin-left: 10px;
   border-radius: 100px;
   border: #ff8c00;
-  padding: 8px; /* Ajuste conforme necessário */
+  padding: 8px; 
 }
 
 .button-group {
   display: flex; /* Torna os botões filhos diretos da .button-group em linha */
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #4b4a483d; /* Cor de fundo do cabeçalho */
-  color: rgb(187, 24, 24);
-  height: 50px; /* Ajuste conforme necessário */
-}
-
 .logo img {
-  height: 40px; /* Ajuste conforme necessário */
+  height: 40px; 
 }
 .icon-container {
-  background-color: #ff8c00; /* Laranja */
-  width: 40px; /* Ajuste conforme necessário */
-  height: 40px; /* Ajuste conforme necessário */
+  background-color: #ff8c00; 
+  width: 40px; 
+  height: 40px; 
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%; /* Para tornar o background um círculo */
-  /* Espaçamento entre os ícones, ajuste conforme necessário */
+  /* Espaçamento entre os ícones*/
   margin-left: 0;
+}
+.carousel-text h3 {
+  font-size: 30px;
+  padding-bottom: 15px;
+}
+.carousel-text h1 {
+  font-size: 60px;
+  padding-bottom: 15px;
+}
+.carousel-text p {
+  font-size: 20px;
+}
+.corousel-button {
+  background-color: #ff8c00;
+  width: 300px;
+  padding: 15px;
+  border-radius: 100px;
+  position: absolute;
+  left: 30%;
+  margin-top: 40px;
+  box-sizing: border-box;
+}
+.corousel-button button {
+  background-color: #ff8c00;
+  padding: 18px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.5s;
+  box-sizing: border-box;
+}
+.corousel-button button:hover {
+  background-color: rgba(0, 0, 0, 0.349);
+}
+button:nth-child(1) {
+  margin-right: 15px;
+}
+
+@media (max-width: 425px) {
+  .text-button {
+    display: none;
+  }
+  .logo img {
+    width: 123px;
+  }
+  .button-group {
+    margin-right: 45px;
+  }
 }
 </style>
