@@ -12,7 +12,7 @@
   <Header :searchDrink="searchDrink" />
   <slot></slot>
   <CarouselInitialPage />
-  <TesteJavascript :searcheddrinks="drinks" :emptydrink="emptydrink" />
+  <CategoryDrinks :searcheddrinks="drinks" :emptydrink="emptydrink" />
   <slot></slot>
   <div class="space-containers">
     <section class="sec-primy">
